@@ -1,4 +1,6 @@
-﻿using System.Xml.Linq;
+﻿using System.Collections.Generic;
+using System;
+using System.Xml.Linq;
 
 class InvalidNameException : Exception
 {
@@ -32,41 +34,41 @@ interface IGotHereable
 class Person : ILightable, IGotHereable
 {
     private string Name;
-    public string name
+    public void setName(string value)
     {
-        get { return Name; }
-        set
+        if (string.IsNullOrWhiteSpace(value))
         {
-            if (string.IsNullOrWhiteSpace(value))
-            {
-                throw new ArgumentException("Имя не может быть пустым");
-            }
-            Name = value;
+            throw new ArgumentException("Имя не может быть пустым");
         }
+        Name = value;
+
     }
     private string Spot;
-    public string spot
+    public void setSpot(string value)
     {
-        get { return Spot; }
-        set
+        if (string.IsNullOrWhiteSpace(value))
         {
-            if (string.IsNullOrWhiteSpace(value))
-            {
-                throw new ArgumentException("Место не может быть пустым");
-            }
-            Spot = value;
+            throw new ArgumentException("Место не может быть пустым");
         }
+        Spot = value;
     }
-    public bool IsSick { get; set; }
-    public bool IsTired { get; set; }
-    public bool IsHungry { get; set; }
-    public bool IsSickDealer { get; set; }
-    public bool IsHungryDealer { get; set; }
-    public bool IsTiredDealer { get; set; }
-    public bool IsMoney { get; set; }
-    public bool PassedByDealer { get; set; }
-    public bool MurderDealer { get; set; }
-    public Bag Inventory { get; set; } = new Bag();
+
+    private bool IsSick { get; set; }
+    private bool IsTired { get; set; }
+    private bool IsHungry { get; set; }
+    private bool IsSickDealer { get; set; }
+    private bool IsHungryDealer { get; set; }
+    private bool IsTiredDealer { get; set; }
+    private bool IsMoney { get; set; }
+    private bool PassedByDealer { get; set; }
+    private bool MurderDealer { get; set; }
+    private Bag Inventory { get; set; } = new Bag();
+
+    public Bag getInventory
+    {
+
+        get { return Inventory; }
+    }
 
     public Person(string name, string spot)
     {
@@ -120,7 +122,7 @@ class Person : ILightable, IGotHereable
             IsSickDealer = false;
             IsTiredDealer = false;
             Console.WriteLine($"Из за того что {Name} надел кожаную куртку, в карманах оказались деньги, и он смог купить себе поесть");
-            Inventory.AddItems(Items.Apple); Inventory.AddItems(Items.Bottle);
+            getInventory.AddItems(Items.Apple); getInventory.AddItems(Items.Bottle);
             Console.WriteLine($"{Name} положил купленные предметы в походную сумку");
         }
         else
@@ -139,7 +141,7 @@ class Person : ILightable, IGotHereable
                     IsSickDealer = true;
                 }
                 Console.WriteLine($"{Name} убил торговца, забрал еду, поэтому он точно не останется голодным");
-                Inventory.AddItems(Items.Meat); Inventory.AddItems(Items.Apple); Inventory.AddItems(Items.Cigarette);
+                getInventory.AddItems(Items.Meat); getInventory.AddItems(Items.Apple); getInventory.AddItems(Items.Cigarette);
                 Console.WriteLine($"{Name} положил награбленые предметы в походную сумку");
             }
             else if (input3 == "2")
@@ -150,7 +152,7 @@ class Person : ILightable, IGotHereable
                 Console.WriteLine($"Из за того что денег нет, {Name} решил пройти мимо дальше на поиски еды");
                 if (input2 == "1")
                 {
-                    Inventory.AddItems(Items.Fish); Inventory.AddItems(Items.Apple);
+                    getInventory.AddItems(Items.Fish); getInventory.AddItems(Items.Apple);
                     Console.WriteLine($"{Name} поймал рыбу и собрал яблоки, положил это в походную сумку");
                 }
             }
@@ -248,7 +250,7 @@ class Person : ILightable, IGotHereable
         CanSleep();
     }
 
-    public override bool Equals(object? obj)
+    public override bool Equals(object obj)
     {
         if (obj is Person other)
         {
@@ -322,7 +324,7 @@ class Chest : Storage
             }
         }
     }
-    public override bool Equals(object? obj)
+    public override bool Equals(object obj)
     {
         if (obj is Chest other)
         {
@@ -378,7 +380,7 @@ class Bag : Storage
             }
         }
     }
-    public override bool Equals(object? obj)
+    public override bool Equals(object obj)
     {
         if (obj is Bag other)
         {
@@ -399,25 +401,39 @@ class Program
 {
     static void Main()
     {
-        Person person = new Person("Робин", "Долина");
-        person.LeaveHome();
-        person.GotHere();
-        person.LightLamp();
-        person.Inventory.Info();
-        person.Inventory.PrintItems();
-        person.Inventory.GetItem(Items.Apple);
-        Console.WriteLine("Герой поел яблоко");
-        person.Condition();
+        while (true)
+        {
+            Console.Write("Введите имя вашего героя: ");
+            string inputname = Console.ReadLine();
+            Console.Write("Введите место куда отправится герой: ");
+            string inputspot = Console.ReadLine();
+            Person person = new Person(inputname, inputspot);
+            person.LeaveHome();
+            person.GotHere();
+            person.LightLamp();
+            person.getInventory.Info();
+            person.getInventory.PrintItems();
+            person.getInventory.GetItem(Items.Apple);
+            Console.WriteLine("Герой поел яблоко");
+            person.Condition();
 
-        Chest chest = new Chest();
-        chest.Info();
-        chest.AddItems(Items.Tabaco);
-        chest.AddItems(Items.Bible);
-        chest.AddItems(Items.Cigarette);
-        chest.AddItems(Items.Lamp);
-        chest.AddItems(Items.Towel);
-        chest.PrintItems();
-        chest.GetItem(Items.Bible);
-        chest.GetItem(Items.Tabaco);
+            Chest chest = new Chest();
+            chest.Info();
+            chest.AddItems(Items.Tabaco);
+            chest.AddItems(Items.Bible);
+            chest.AddItems(Items.Cigarette);
+            chest.AddItems(Items.Lamp);
+            chest.AddItems(Items.Towel);
+            chest.PrintItems();
+            chest.GetItem(Items.Bible);
+            chest.GetItem(Items.Tabaco);
+
+            Console.Write("\nХотите продолжить игру или выйти (1 или 2)? ");
+            string inputgame = Console.ReadLine();
+            if (inputgame == "2")
+            {
+                break;
+            }
+        }
     }
 }
