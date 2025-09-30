@@ -374,6 +374,7 @@ class Bag : Storage
             return;
         }
         base.GetItem(name);
+        Console.WriteLine($"Вы достали {name} из сумки");
     }
     public override bool Equals(object obj)
     {
