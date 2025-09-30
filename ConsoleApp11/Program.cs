@@ -290,7 +290,17 @@ abstract class Storage
         }
         else items.Add(name);
     }
-
+    public virtual void GetItem(Items item)
+    {
+        foreach (var name in items)
+        {
+            if (item.Equals(name))
+            {
+                items.Remove(name);
+                break;
+            }
+        }
+    }
 }
 class Chest : Storage
 {
@@ -307,22 +317,15 @@ class Chest : Storage
     {
         base.AddItems(name);
     }
-    public void GetItem(Items name)
+    public override void GetItem(Items name)
     {
         if (!items.Contains(name))
         {
             Console.WriteLine($"Предмета {name} нет в сундуке");
             return;
         }
-        foreach (var item in items)
-        {
-            if (item.Equals(name))
-            {
-                Console.WriteLine($"Вы достали {name} из сундука");
-                items.Remove(name);
-                break;
-            }
-        }
+        base.GetItem(name);
+        Console.WriteLine($"Вы достали {name} из сундука");
     }
     public override bool Equals(object obj)
     {
@@ -341,7 +344,6 @@ class Chest : Storage
     {
         return $"{items}";
     }
-
 }
 class Bag : Storage
 {
@@ -362,23 +364,16 @@ class Bag : Storage
             return;
         }
         base.AddItems(name);
+        Console.WriteLine($"Вы достали {name} из сумки");
     }
-    public void GetItem(Items name)
+    public override void GetItem(Items name)
     {
         if (!items.Contains(name))
         {
             Console.WriteLine($"Предмета {name} нет в сумке");
             return;
         }
-        foreach (var item in items)
-        {
-            if (item.Equals(name))
-            {
-                Console.WriteLine($"Вы достали {name} из сумки");
-                items.Remove(name);
-                break;
-            }
-        }
+        base.GetItem(name);
     }
     public override bool Equals(object obj)
     {
@@ -417,7 +412,7 @@ class Program
             Console.WriteLine("Герой поел яблоко");
             person.Condition();
 
-            Chest chest = new Chest();
+            Storage chest = new Chest();
             chest.Info();
             chest.AddItems(Items.Tabaco);
             chest.AddItems(Items.Bible);
